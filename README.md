@@ -1,1 +1,1 @@
-# integral-psic-logos-
+# integral-psicologos-
