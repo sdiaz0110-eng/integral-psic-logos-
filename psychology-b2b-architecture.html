@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psicología Integral - Arquitectura de Microservicios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e0e7ef 0%, #c9d6df 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 2.2em;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+        
+        .subtitle {
+            color: #34495e;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.05em;
+        }
+        
+        .architecture {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .layer {
+            margin-bottom: 35px;
+        }
+        
+        .layer-title {
+            font-size: 1.3em;
+            color: #6B73FF;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #6B73FF;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 18px;
+        }
+        
+        .service-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(107, 115, 255, 0.3);
+            border-color: #6B73FF;
+        }
+        
+        .service-card.active {
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            color: white;
+            border-color: #000DFF;
+        }
+        
+        .service-icon {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .service-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .service-description {
+            font-size: 0.9em;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+        
+        .service-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            display: none;
+        }
+        
+        .service-card.active .service-details {
+            display: block;
+        }
+        
+        .detail-item {
+            margin: 8px 0;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .user-types {
+            background: #e8f4f8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .user-types-title {
+            font-weight: 600;
+            color: #0c5460;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .user-type {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .user-icon {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        
+        .infrastructure {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 20px;
+        }
+        
+        .infra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .infra-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #6B73FF;
+        }
+        
+        .infra-icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+        
+        .infra-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .legend {
+            margin-top: 25px;
+            padding: 20px;
+            background: #d4edda;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #155724;
+            font-size: 1.05em;
+        }
+        
+        .legend-text {
+            font-size: 0.9em;
+            color: #155724;
+            line-height: 1.7;
+        }
+
+        .integration-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .integration-note-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .integration-note-text {
+            font-size: 0.9em;
+            color: #856404;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Psicología Integral - Arquitectura de Microservicios</h1>
+        <p class="subtitle">Marketplace, Agendamiento y Reportes Institucionales - Haz clic en cada servicio</p>
+        
+        <div class="architecture">
+            
+            <!-- User Types -->
+            <div class="user-types">
+                <div class="user-types-title">👥 Tipos de Usuario en la Plataforma</div>
+                <div class="user-grid">
+                    <div class="user-type">
+                        <div class="user-icon">🎓</div>
+                        <strong>Colegios</strong>
+                    </div>
+                    <div class="user-type">
+                        <div class="user-icon">🏢</div>
+                        <strong>Empresas</strong>
+                    </div>
+                    <div class="user-type">
+                        <div class="user-icon">🧑‍⚕️</div>
+                        <strong>Psicólogos</strong>
+                    </div>
+                    <div class="user-type">
+                        <div class="user-icon">👨‍💼</div>
+                        <strong>Administradores</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Layer -->
+            <div class="layer">
+                <div class="layer-title"><span>🔐</span> Autenticación & Seguridad</div>
+                <div class="services-grid">
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">🔐</div>
+                        <div class="service-name">Auth & IAM Service</div>
+                        <div class="service-description">Autenticación multi-tenant con roles institucionales</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Auth:</span> OAuth 2.0, JWT con refresh tokens</div>
+                            <div class="detail-item"><span class="detail-label">Roles:</span> Psicólogo, Admin Institución, Coordinador, Super Admin</div>
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL + Redis (sesiones activas)</div>
+                            <div class="detail-item"><span class="detail-label">Features:</span> SSO para empresas grandes, MFA opcional</div>
+                            <div class="detail-item"><span class="detail-label">Rate Limiting:</span> Configurado por tipo de cliente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Core Business Services -->
+            <div class="layer">
+                <div class="layer-title"><span>💼</span> Servicios de Negocio Principal</div>
+                <div class="services-grid">
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">🛒</div>
+                        <div class="service-name">Marketplace Service</div>
+                        <div class="service-description">Directorio de psicólogos con perfiles, especialidades y búsqueda</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL (profesionales) + Elasticsearch (búsqueda)</div>
+                            <div class="detail-item"><span class="detail-label">Features:</span> Filtros por especialidad (laboral, educativa, clínica), ubicación, disponibilidad, tarifa</div>
+                            <div class="detail-item"><span class="detail-label">Validación:</span> Verificación de licencias profesionales</div>
+                            <div class="detail-item"><span class="detail-label">Reviews:</span> Sistema de calificaciones y testimonios institucionales</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📅</div>
+                        <div class="service-name">Scheduling Service</div>
+                        <div class="service-description">Gestión de agenda para talleres, sesiones y programas</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL con índices de disponibilidad</div>
+                            <div class="detail-item"><span class="detail-label">Features:</span> Calendario compartido, bloques de talleres, sesiones recurrentes</div>
+                            <div class="detail-item"><span class="detail-label">Conflictos:</span> Detección automática y sugerencias de horarios alternativos</div>
+                            <div class="detail-item"><span class="detail-label">Notificaciones:</span> Recordatorios 24h antes vía email/SMS</div>
+                            <div class="detail-item"><span class="detail-label">Integración:</span> iCal export, Google Calendar sync</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📋</div>
+                        <div class="service-name">Program Management Service</div>
+                        <div class="service-description">Gestión de programas de prevención y promoción</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL</div>
+                            <div class="detail-item"><span class="detail-label">Tipos:</span> Talleres (bullying, estrés), Programas continuos, Evaluaciones grupales</div>
+                            <div class="detail-item"><span class="detail-label">Gestión:</span> Plantillas de programas, módulos reutilizables, materiales compartidos</div>
+                            <div class="detail-item"><span class="detail-label">Tracking:</span> Asistencia, cumplimiento de objetivos, hitos del programa</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">🎥</div>
+                        <div class="service-name">Virtual Session Service</div>
+                        <div class="service-description">Integración con plataformas de videollamadas</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Integraciones:</span> Zoom API, Google Meet API, Microsoft Teams</div>
+                            <div class="detail-item"><span class="detail-label">Función:</span> Generación automática de links, recordatorios con acceso directo</div>
+                            <div class="detail-item"><span class="detail-label">Registro:</span> Guarda metadata (duración, asistentes) sin grabar contenido</div>
+                            <div class="detail-item"><span class="detail-label">Fallback:</span> Sala de espera si el psicólogo se retrasa</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">💳</div>
+                        <div class="service-name">Billing & Contracts Service</div>
+                        <div class="service-description">Facturación, pagos y contratos institucionales</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Modelos:</span> Pago por sesión, contratos mensuales/anuales, paquetes de talleres</div>
+                            <div class="detail-item"><span class="detail-label">Pagos:</span> Stripe, PSE (Colombia), transferencias corporativas</div>
+                            <div class="detail-item"><span class="detail-label">Facturación:</span> Electrónica DIAN (Colombia), PDF descargable</div>
+                            <div class="detail-item"><span class="detail-label">Contratos:</span> Plantillas digitales con firma electrónica (DocuSign)</div>
+                            <div class="detail-item"><span class="detail-label">Comisiones:</span> Cálculo automático para psicólogos freelance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">👥</div>
+                        <div class="service-name">Organization Service</div>
+                        <div class="service-description">Gestión de instituciones (colegios/empresas) y su estructura</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL</div>
+                            <div class="detail-item"><span class="detail-label">Jerarquía:</span> Institución → Sedes → Departamentos/Cursos → Personas</div>
+                            <div class="detail-item"><span class="detail-label">Multi-tenant:</span> Datos completamente aislados por organización</div>
+                            <div class="detail-item"><span class="detail-label">Usuarios:</span> Gestión de empleados/estudiantes (sin datos clínicos)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reporting & Analytics -->
+            <div class="layer">
+                <div class="layer-title"><span>📊</span> Reportes y Análisis Institucional</div>
+                <div class="services-grid">
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📈</div>
+                        <div class="service-name">Reporting Service</div>
+                        <div class="service-description">Reportes agregados para instituciones (sin datos sensibles)</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL (OLTP) + ClickHouse (OLAP)</div>
+                            <div class="detail-item"><span class="detail-label">Reportes:</span> Asistencia, cobertura, temas frecuentes, satisfacción</div>
+                            <div class="detail-item"><span class="detail-label">Métricas:</span> Dashboard institucional con KPIs (% cobertura, NPS, tendencias)</div>
+                            <div class="detail-item"><span class="detail-label">Exportación:</span> PDF, Excel con gráficos personalizados</div>
+                            <div class="detail-item"><span class="detail-label">⚠️ Privacidad:</span> SOLO datos agregados, nunca información clínica individual</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📝</div>
+                        <div class="service-name">Documentation Service</div>
+                        <div class="service-description">Notas clínicas privadas de psicólogos</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> PostgreSQL con encriptación at-rest</div>
+                            <div class="detail-item"><span class="detail-label">Seguridad:</span> Solo accesible por el psicólogo, encriptado AES-256</div>
+                            <div class="detail-item"><span class="detail-label">Plantillas:</span> Formatos estándar de historia clínica</div>
+                            <div class="detail-item"><span class="detail-label">⚠️ CRÍTICO:</span> NO visible para instituciones, solo para psicólogos</div>
+                            <div class="detail-item"><span class="detail-label">Retención:</span> Política configurable según normativa local</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📋</div>
+                        <div class="service-name">Survey & Feedback Service</div>
+                        <div class="service-description">Encuestas de satisfacción y evaluación de impacto</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">DB:</span> MongoDB (formularios dinámicos)</div>
+                            <div class="detail-item"><span class="detail-label">Tipos:</span> Post-sesión, pre/post programa, clima organizacional</div>
+                            <div class="detail-item"><span class="detail-label">Anónimas:</span> Opción de feedback anónimo para participantes</div>
+                            <div class="detail-item"><span class="detail-label">Análisis:</span> Sentiment analysis, word clouds, tendencias</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Services -->
+            <div class="layer">
+                <div class="layer-title"><span>🛠️</span> Servicios de Soporte</div>
+                <div class="services-grid">
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">🔔</div>
+                        <div class="service-name">Notification Service</div>
+                        <div class="service-description">Email, SMS y notificaciones in-app</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Canales:</span> Email (SendGrid), SMS (Twilio), Push (FCM)</div>
+                            <div class="detail-item"><span class="detail-label">Eventos:</span> Recordatorios, cancelaciones, nuevas asignaciones</div>
+                            <div class="detail-item"><span class="detail-label">Cola:</span> RabbitMQ para delivery garantizado</div>
+                            <div class="detail-item"><span class="detail-label">Preferencias:</span> Usuarios configuran sus canales preferidos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📁</div>
+                        <div class="service-name">Document Storage Service</div>
+                        <div class="service-description">Almacenamiento de materiales y recursos</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Storage:</span> AWS S3 / Google Cloud Storage</div>
+                            <div class="detail-item"><span class="detail-label">Contenido:</span> Materiales de talleres, presentaciones, consentimientos firmados</div>
+                            <div class="detail-item"><span class="detail-label">Acceso:</span> URLs firmadas temporales, control por roles</div>
+                            <div class="detail-item"><span class="detail-label">Versiones:</span> Control de versiones de documentos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">🔍</div>
+                        <div class="service-name">Search Service</div>
+                        <div class="service-description">Búsqueda de psicólogos, programas y recursos</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Motor:</span> Elasticsearch</div>
+                            <div class="detail-item"><span class="detail-label">Índices:</span> Psicólogos, programas, materiales educativos</div>
+                            <div class="detail-item"><span class="detail-label">Features:</span> Full-text, filtros combinados, autocomplete</div>
+                            <div class="detail-item"><span class="detail-label">Ranking:</span> Por relevancia, calificación, disponibilidad</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card" onclick="toggleService(this)">
+                        <div class="service-icon">📧</div>
+                        <div class="service-name">Communication Service</div>
+                        <div class="service-description">Mensajería interna entre partes</div>
+                        <div class="service-details">
+                            <div class="detail-item"><span class="detail-label">Función:</span> Chat para coordinar logística (no sesiones clínicas)</div>
+                            <div class="detail-item"><span class="detail-label">DB:</span> MongoDB + Redis (mensajes recientes)</div>
+                            <div class="detail-item"><span class="detail-label">Uso:</span> Institución ↔ Psicólogo para temas administrativos</div>
+                            <div class="detail-item"><span class="detail-label">Límite:</span> NO para comunicación clínica (usar canales oficiales)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Integration Note -->
+            <div class="integration-note">
+                <div class="integration-note-title">🔌 Integraciones Externas Clave</div>
+                <div class="integration-note-text">
+                    <strong>• Videollamadas:</strong> Zoom API, Google Meet API, Microsoft Teams<br>
+                    <strong>• Pagos:</strong> Stripe, PSE (Colombia), PayU<br>
+                    <strong>• Facturación:</strong> DIAN (Colombia), API de facturación electrónica<br>
+                    <strong>• Firma digital:</strong> DocuSign para contratos<br>
+                    <strong>• Email/SMS:</strong> SendGrid, Twilio<br>
+                    <strong>• Calendario:</strong> Google Calendar, iCal export<br>
+                    <strong>• SSO:</strong> SAML 2.0 para empresas grandes
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-title">🔒 Consideraciones Críticas de Seguridad y Privacidad</div>
+                <div class="legend-text">
+                    <strong>• Aislamiento total multi-tenant:</strong> Datos de cada institución completamente separados<br>
+                    <strong>• Encriptación end-to-end:</strong> Notas clínicas encriptadas, solo accesibles por psicólogo<br>
+                    <strong>• RBAC estricto:</strong> Instituciones NO pueden ver información clínica individual<br>
+                    <strong>• Auditoría completa:</strong> Logs de quién accede qué información y cuándo<br>
+                    <strong>• Cumplimiento normativo:</strong> HIPAA-like, Ley 1581 Colombia (Habeas Data)<br>
+                    <strong>• Backup encriptado:</strong> Backups diarios con retención según normativa<br>
+                    <strong>• Reportes agregados únicamente:</strong> Instituciones solo ven estadísticas, nunca casos individuales
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleService(card) {
+            const wasActive = card.classList.contains('active');
+            
+            // Close all cards
+            document.querySelectorAll('.service-card').forEach(c => {
+                c.classList.remove('active');
+            });
+            
+            // Open clicked card if it wasn't active
+            if (!wasActive) {
+                card.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
